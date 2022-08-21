@@ -1,12 +1,10 @@
 # Code Guidelines
 
-### Best practices
-
 ## Git hygiene
 
 ### Updating your branches
 
-Use `git rebase` to update your local branches; Do **_not_** use `git merge` as combining merging and rebasing can result in many undesirable conflicts. To update via rebase:
+Use `git pull --rebase` to update your local branches; Do **_not_** use `git merge` as combining merging and rebasing can result in many undesirable conflicts. To update via rebase:
 
 1. `git rebase` + `last commit of target branch`
 2. If conflicts arise, resolve them in your editor, stage the changes, then use `git rebase --continue`
@@ -18,15 +16,7 @@ If you've made a mistake or something goes wrong during the rebasing process, yo
 
 To help prevent pushing code that's not been thouroughly reviewed and give your teamates the confidence they need to approve your work in a timely fashion, break up your large contributions into multiple, smaller PRs.
 
-Unless your contribution consists of only simple naming changes, this can be difficult and time consuming to review, here's how to break up your PR:
-
-1. Pull your branch to ensure you have the latest changes
-2. Separate your changes from the target branch, use `git reset --soft` + `last commit of target branch`
-3. Unstage those chages with `git reset`.
-4. Create a new branch, name it accordingly
-5. Now that you're in your new branch, you are free to add the files you want, pick the files that make sense to group together and stage them, then proceed commiting, creating an upstream branch, and opening the PR.
-
-It's recommended you stash the leftover files until the first PR is reviewed and merged, then repeat this process until all files have been added, rather than having all of your PRs open at once.
+Unless your contribution consists of only simple naming changes, this can be difficult and time consuming to review.
 
 ## Naming Conventions
 
@@ -112,29 +102,9 @@ Examples: `hotfix/EX-17/drawer-wont-open` `feature/TRAD-42/dogecoin-support`
 - `perf` or `performance`: A code change that improves performance
 - `test`: Adding missing or correcting existing tests
 
-## Best Practices
-
 ### Eslint
 
-Eslint is set up to provide linting rules and improve code guidelines. Remember to run `yarn lint` before committing and pushing changes.
-
-When working on old legacy files, having the default IDE config may lead to several formatting changes. If that happens, there are three options:
-
-- Make a first commit a formatting commit, this way the dev making the future PR review can just look at the next commits an avoid the formatting one.
-
-- If the PR is really big and may have a lot of intermediate commits just for formatting, the review will be really hard to do. Hence, disabling `eslint.autoFixOnSave` and `editor.formatOnSave` (for VSCode IDE) may be the best option. Those files can be formatted in future PRs
-
-- If you know the files beforehand and some of them will need formatting, it's possible to make a first PR just to format all of them, quickly merge it and then start working on the real changes.
-
-### Commitizen
-
-Yo can use commitizen to format commits in order to have a unified commit template to fill in.
-
-- `yarn add -g commitizen`
-
-- Use `git cz` instead of `git commit`
-
-- Follow the walkthrough and add the relevant information
+Eslint is set up to provide linting rules and improve code guidelines. Remember to run `npm run lint` before committing and pushing changes.
 
 ### Use `const` instead of `let` when possible
 
@@ -145,16 +115,6 @@ If you're not going to mutate the variable, use `const` rather than `let` as thi
 Keep simple logic for boolean expressions.
 
 ```typescript
-// Not Preferred
-if (array.length > 0)
-
-if (array.length === 0)
-
-// Preferred
-if (array.length)
-
-if (!array.length)
-
 // Not Preferred
 if (user === null)
 
@@ -428,11 +388,11 @@ console.log(nestedObj.layer1.layer2.layer3.desiredValue);
 
 ### Custom hooks
 
-Separating the UI from logic is almost always a good strategy, it's strongly preferred that we adbstract our logic into custom hooks to reduce file size, simplify testing and refactoring, and promote code reusability. When hooks become large(size TBD) they need to be broken into smaller, more maintainable hooks, just like any other component.
+Separating the UI from logic is almost always a good strategy, it's strongly preferred that we adbstract our logic into custom hooks to reduce file size, simplify testing and refactoring, and promote code reusability. When hooks become large (size TBD) they need to be broken into smaller, more maintainable hooks, just like any other component.
 
 - #### Focus on reusability when building custom hooks
 
-* When making a custom hook, prioritize designing your hook to be generalized enough to be used elsewhere in the codebase. If your hook can be used elsewhere, add it the the `blockfi-ui/src/hooks` directory. For hooks that are highly specific for a particular task i.e: Extracting component-specific logic, put your hook into a `./hooks` directory at the root of the parent directory the hook is being used.
+* When making a custom hook, prioritize designing your hook to be generalized enough to be used elsewhere in the codebase. If your hook can be used elsewhere, add it the the `/src/hooks` directory. For hooks that are highly specific for a particular task i.e: Extracting component-specific logic, put your hook into a `./hooks` directory at the root of the parent directory the hook is being used.
 
 ### Returning | When and when not to do so implicitly
 
@@ -466,37 +426,37 @@ It's strongly recommended to use explicit returns for all function components, e
 
 ## Typescript Guidelines
 
-#### Prop interface naming standard
+#### Prop types naming standard
 
-For naming prop interfaces, use the name of the function receiving the props followed by 'Props' in PascalCase:
+For naming prop types, use the name of the function receiving the props followed by 'Props' in PascalCase:
 
 ```typescript
 // Preferred
-interface MyComponentProps {}
+type MyComponentProps = {}
 
 // Not preferred
-interface myComponentProps {}
+type myComponentProps = {}
 ```
 
-#### Return value interface naming standard
+#### Return value type naming standard
 
-For naming function return interfaces, use the name of the function followed by 'Return' in PascalCase:
+For naming function return types, use the name of the function followed by 'Return' in PascalCase:
 
 ```typescript
 // Preferred
-interface MyComponentReturn {}
+types MyComponentReturn {}
 
 // Not preferred
-interface myComponentReturn {}
+types myComponentReturn {}
 ```
 
 ### Prop annotation
 
-When annotating arguments for functions whether they are components, hooks, pure functions, etc, create a prop interface. This holds true for return type annotations as well.
+When annotating arguments for functions whether they are components, hooks, pure functions, etc, create a prop type. This holds true for return type annotations as well.
 
 ```typescript
 // Preferred
-interface MyComponentProps {
+type MyComponentProps = {
  prop1: string;
  prop2: boolean;
  prop3: number;
@@ -523,59 +483,3 @@ export const MyComponent: FunctionComponent = ({
   ...
 }
 ```
-
-### Utility types
-
-Code duplication is to be avoided as much as possible, this holds true for type definitions as well. We can leverage the power of utility types to prevent unnecessary typing duplication in our code.
-
-Say we have an interface called `MyPerson`:
-
-```typescript
-interface MyPerson {
-  name: string;
-  dob: Date;
-  heightCm: number;
-}
-```
-
-At some point in our application, we need to account for individuals that have a college degree. To avoid creating an entirely new identical interface with only one extra property, we have multiple options at our disposal, including adding an optional `degreeFocus` property to the original `MyPerson` interface, but for the sake of this let's use the `intersection` utility.
-
-```typescript
-type MyHigherEdPerson = MyPerson & { degreeFocus: string };
-```
-
-`MyHigherEdPerson` type will have all the properties of the `MyPerson`, including the `degreeFocus` property as well.
-
-Let's say some highly educated and privacy-focused users don't feel comfortable sharing their height with us, let's use `omit` for this.
-
-```typescript
-type MyParanoidHigherEdPerson = Omit<MyHigherEdPerson, "heightCm">;
-```
-
-As you can imagine, `MyParanoidHigherEdPerson` contains all the properties of `MyHigherEdPerson`, minus the `heightCm` property.
-
-For a final example, let's create a type that can be an object by using the `Record` utility type that consists of numeric keys and values of `MyPerson` without the `dob` property. We can nest utility types together to create near limitless type possibilities.
-
-```typescript
-type MyPersonNoBirthdayCollection = Record<number, Omit<MyPerson, "dob">>;
-
-const MyListOfPeopleWithoutBirthdays: MyPersonNoBirthdayCollection = {
-  1: {
-    name: "Abigail",
-    heightCm: 74,
-  },
-  2: {
-    name: "Harold",
-    heightCm: 68,
-  },
-  3: {
-    name: "Michael",
-    heightCm: 99,
-  },
-  // .......
-};
-```
-
-If you've worked with other typed languages before, you can appreciate just how flexible and easy Typescript makes it to create types and avoid type duplication.
-
-Typescript offers many more kinds of utility types, you can learn about them in detail [here](https://www.typescriptlang.org/docs/handbook/utility-types.html)
