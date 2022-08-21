@@ -1,7 +1,5 @@
 # Code Guidelines
 
-## Git hygiene
-
 ### Updating your branches
 
 Use `git pull --rebase` to update your local branches; Do **_not_** use `git merge` as combining merging and rebasing can result in many undesirable conflicts. To update via rebase:
@@ -18,7 +16,7 @@ To help prevent pushing code that's not been thouroughly reviewed and give your 
 
 Unless your contribution consists of only simple naming changes, this can be difficult and time consuming to review.
 
-## Naming Conventions
+### Naming Conventions
 
 Always use meaningful names. Long names are better than vague names. It's better to have a name that describes in the best possible way what it is, than having abbreviated or short names that require understanding the code to realize what value they hold or what they do.
 
